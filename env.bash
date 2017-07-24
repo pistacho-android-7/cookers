@@ -52,7 +52,7 @@ heat() {
             cd ${PATH_KERNEL} && heat "$@" || return $?
             cd "${TMP_PWD}"
             source build/envsetup.sh
-            lunch "$TARGET_DEVICE"-eng
+            lunch "$TARGET_DEVICE"-user
             make "$@" || return $?
 
             ;;
@@ -85,7 +85,7 @@ cook() {
             cd "${TMP_PWD}"
 
             source build/envsetup.sh
-            lunch "$TARGET_DEVICE"-eng
+            lunch "$TARGET_DEVICE"-user
             make "$@" || return $?
             make "$@"  bootimage || return $?
             ;;
