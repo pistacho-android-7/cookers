@@ -5,6 +5,7 @@ PATH_UBOOT="${PWD}/bootable/bootloader/uboot-imx"
 export PATH="${PATH_UBOOT}/tools:${PATH}"
 export ARCH=arm
 export CROSS_COMPILE="${PWD}/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-eabi-"
+export USER=$(whoami)
 
 IMX_PATH="./mnt"
 MODULE=$(basename $BASH_SOURCE)
