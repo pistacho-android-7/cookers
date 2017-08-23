@@ -8,6 +8,7 @@ export CROSS_COMPILE="${PWD}/prebuilts/gcc/linux-x86/arm/arm-eabi-4.8/bin/arm-ea
 export USER=$(whoami)
 
 IMX_PATH="./mnt"
+RECY_PATH="./mnt_recovery"
 MODULE=$(basename $BASH_SOURCE)
 CPU_TYPE=$(echo $MODULE | awk -F. '{print $3}')
 CPU_MODULE=$(echo $MODULE | awk -F. '{print $4}')
@@ -148,19 +149,30 @@ flashcard() {
     sudo mkfs.vfat -F 32 ${dev_node}1 -n boot;sync
 
     mkdir $IMX_PATH
+    mkdir $RECY_PATH
+
     sudo mount ${dev_node}1 $IMX_PATH;
+    sleep 0.2
+    sudo mount ${dev_node}2 $RECY_PATH;
     sudo cp $PATH_KERNEL/arch/arm/boot/zImage $IMX_PATH/zImage; sync
+    sudo cp $PATH_KERNEL/arch/arm/boot/zImage $RECY_PATH/zImage; sync
 
     if [[ "$TARGET_DEVICE" == "pistachio_6dq" ]]; then
       sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $IMX_PATH/imx6q-pistachio.dtb; sync
       sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.hdmi $IMX_PATH/uEnv.txt; sync
-
+      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $RECY_PATH/imx6q-pistachio.dtb; sync
+      sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.hdmi $RECY_PATH/uEnv.txt; sync
     fi
 
     # download the ramdisk
     echo == download the ramdisk ==
     sudo mkimage -A arm -O linux -T ramdisk -C none -a 0x10800800 -n "Android Root Filesystem" -d ./out/target/product/$TARGET_DEVICE/ramdisk.img ./out/target/product/$TARGET_DEVICE/uramdisk.img
     sudo cp ./out/target/product/$TARGET_DEVICE/uramdisk.img $IMX_PATH/;sync
+
+    # download the recovery ramdisk
+    echo == download the ramdisk ==
+    sudo mkimage -A arm -O linux -T ramdisk -C none -a 0x10800800 -n "Android Root Filesystem" -d ./out/target/product/$TARGET_DEVICE/ramdisk-recovery.img ./out/target/product/$TARGET_DEVICE/uramdisk-recovery.img
+    sudo cp ./out/target/product/$TARGET_DEVICE/uramdisk-recovery.img $RECY_PATH/uramdisk.img;sync
 
     # download the android system
     echo == download the system ==
@@ -173,6 +185,8 @@ flashcard() {
     sudo resize2fs ${dev_node}5 1600M;sync
 
     sudo rm -rf $IMX_PATH
+    sudo rm -rf $RECY_PATH
+
     sync
     sleep 1
 
