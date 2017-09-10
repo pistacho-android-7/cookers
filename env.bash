@@ -147,6 +147,7 @@ flashcard() {
     sudo hdparm -z ${dev_node}
     sync
     sudo mkfs.vfat -F 32 ${dev_node}1 -n boot;sync
+    sudo mkfs.vfat -F 32 ${dev_node}2;sync
 
     mkdir $IMX_PATH
     mkdir $RECY_PATH
