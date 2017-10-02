@@ -11,19 +11,21 @@ IMX_PATH="./mnt"
 RECY_PATH="./mnt_recovery"
 MODULE=$(basename $BASH_SOURCE)
 CPU_TYPE=$(echo $MODULE | awk -F. '{print $3}')
-CPU_MODULE=$(echo $MODULE | awk -F. '{print $4}')
-BASEBOARD=$(echo $MODULE | awk -F. '{print $5}')
+BOARDNAME=$(echo $MODULE | awk -F. '{print $4}')
+DISPLAY=$(echo $MODULE | awk -F. '{print $5}')
 
 
+# imx series only
 if [[ "$CPU_TYPE" == "nutsboard" ]]; then
-    if [[ "$CPU_MODULE" == "pistachio" ]]; then
-        if [[ "$BASEBOARD" == "pistachio" ]]; then
-            UBOOT_CONFIG='mx6_pistachio_android_defconfig'
-            KERNEL_IMAGE='zImage'
-            KERNEL_CONFIG='nutsboard_imx_android_defconfig'
-            DTB_TARGET='imx6q-pistachio.dtb'
-            TARGET_DEVICE='pistachio_6dq'
-        fi
+    KERNEL_IMAGE='zImage'
+    KERNEL_CONFIG='nutsboard_imx_android_defconfig'
+    DTB_TARGET='imx6q-pistachio.dtb imx6q-pistachio-lite.dtb'
+    TARGET_DEVICE='pistachio_6dq'
+
+    if [[ "$BOARDNAME" == "pistachio" ]]; then
+      UBOOT_CONFIG='mx6_pistachio_android_defconfig'
+    elif [[ "$BOARDNAME" == "pistachio-lite" ]]; then
+      UBOOT_CONFIG='mx6_pistachio-lite_android_defconfig'
     fi
 fi
 
@@ -160,11 +162,12 @@ flashcard() {
 
     if [[ "$TARGET_DEVICE" == "pistachio_6dq" ]]; then
       sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $IMX_PATH/imx6q-pistachio.dtb; sync
-      sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.hdmi $IMX_PATH/uEnv.txt; sync
       sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $RECY_PATH/imx6q-pistachio.dtb; sync
-      sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.hdmi $RECY_PATH/uEnv.txt; sync
+      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $IMX_PATH/imx6q-pistachio.dtb; sync
+      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $RECY_PATH/imx6q-pistachio.dtb; sync
+      sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.$(DISPLAY) $IMX_PATH/uEnv.txt; sync
+      sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt.$(DISPLAY) $RECY_PATH/uEnv.txt; sync
     fi
-
     # download the ramdisk
     echo == download the ramdisk ==
     sudo mkimage -A arm -O linux -T ramdisk -C none -a 0x10800800 -n "Android Root Filesystem" -d ./out/target/product/$TARGET_DEVICE/ramdisk.img ./out/target/product/$TARGET_DEVICE/uramdisk.img
