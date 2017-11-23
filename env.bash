@@ -162,8 +162,8 @@ flashcard() {
     if [[ "$TARGET_DEVICE" == "pistachio_6dq" ]]; then
       sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $IMX_PATH/imx6q-pistachio.dtb; sync
       sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio.dtb $RECY_PATH/imx6q-pistachio.dtb; sync
-      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $IMX_PATH/imx6q-pistachio.dtb; sync
-      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $RECY_PATH/imx6q-pistachio.dtb; sync
+      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $IMX_PATH/imx6q-pistachio-lite.dtb; sync
+      sudo cp $PATH_KERNEL/arch/arm/boot/dts/imx6q-pistachio-lite.dtb $RECY_PATH/imx6q-pistachio-lite.dtb; sync
       sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt."$DISPLAY" $IMX_PATH/uEnv.txt; sync
       sudo cp ./device/fsl/"$TARGET_DEVICE"/uenv/uEnv.txt."$DISPLAY" $RECY_PATH/uEnv.txt; sync
     fi
